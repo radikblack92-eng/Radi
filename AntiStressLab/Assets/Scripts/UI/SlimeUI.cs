@@ -86,7 +86,11 @@ namespace AntiStressLab.UI
             var go = new GameObject("Canvas");
             var canvas = go.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            go.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            var scaler = go.AddComponent<CanvasScaler>();
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            // Mobile-friendly defaults
+            scaler.referenceResolution = new Vector2(1080f, 1920f);
+            scaler.matchWidthOrHeight = 0.5f;
             go.AddComponent<GraphicRaycaster>();
             return canvas;
         }
@@ -101,7 +105,7 @@ namespace AntiStressLab.UI
             rt.anchorMax = new Vector2(0.5f, 0f);
             rt.pivot = new Vector2(0.5f, 0f);
             rt.anchoredPosition = new Vector2(0f, 24f);
-            rt.sizeDelta = new Vector2(680f, 210f);
+            rt.sizeDelta = new Vector2(520f, 0f);
 
             var img = go.AddComponent<Image>();
             img.color = new Color(0f, 0f, 0f, 0.35f);
@@ -189,7 +193,7 @@ namespace AntiStressLab.UI
             var handleImg = handle.AddComponent<Image>();
             handleImg.color = new Color(1f, 1f, 1f, 0.95f);
             var handleRt = handle.GetComponent<RectTransform>();
-            handleRt.sizeDelta = new Vector2(20f, 40f);
+            handleRt.sizeDelta = new Vector2(18f, 28f);
 
             slider.targetGraphic = handleImg;
             slider.fillRect = fillRt;
@@ -239,6 +243,7 @@ namespace AntiStressLab.UI
 
             var rt = go.GetComponent<RectTransform>();
             rt.sizeDelta = new Vector2(0f, 44f);
+            go.AddComponent<LayoutElement>().preferredHeight = 44f;
 
             var text = CreateText(go.transform, title, 1f);
             text.alignment = TextAnchor.MiddleCenter;
@@ -254,7 +259,7 @@ namespace AntiStressLab.UI
             var t = go.AddComponent<Text>();
             t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             t.text = content;
-            t.fontSize = 20;
+            t.fontSize = 18;
             t.color = new Color(1f, 1f, 1f, 0.85f);
 
             var rt = go.GetComponent<RectTransform>();
