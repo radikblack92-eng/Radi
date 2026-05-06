@@ -1,0 +1,42 @@
+# Unity (recommended)
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Mm]emoryCaptures/
+
+# Asset meta data should only be ignored when the corresponding asset is also ignored
+!/[Aa]ssets/**/*.meta
+
+# VS / Rider
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# Unity generated
+*.unitypackage
+*.apk
+*.aab
+*.app
+*.ipa
+*.xcodeproj
+*.xcworkspace
+*.gradle
+
+# Crash reports
+sysinfo.txt
+
+# OS
+Thumbs.db
+Desktop.ini
+
