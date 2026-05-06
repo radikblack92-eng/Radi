@@ -7,6 +7,7 @@ namespace AntiStressLab.Slime
     /// for interaction (tap/drag), reset, and color changes.
     /// </summary>
     [DisallowMultipleComponent]
+    [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider))]
     public sealed class SlimeController : MonoBehaviour
     {
         private SlimeSettings _settings;
@@ -28,9 +29,20 @@ namespace AntiStressLab.Slime
             }
 
             // Components
-            _meshFilter = gameObject.GetComponent<MeshFilter>() ?? gameObject.AddComponent<MeshFilter>();
-            _meshRenderer = gameObject.GetComponent<MeshRenderer>() ?? gameObject.AddComponent<MeshRenderer>();
-            _meshCollider = gameObject.GetComponent<MeshCollider>() ?? gameObject.AddComponent<MeshCollider>();
+            if (!gameObject.TryGetComponent(out _meshFilter)) _meshFilter = gameObject.AddComponent<MeshFilter>();
+            if (!gameObject.TryGetComponent(out _meshRenderer)) _meshRenderer = gameObject.AddComponent<MeshRenderer>();
+            if (!gameObject.TryGetComponent(out _meshCollider)) _meshCollider = gameObject.AddComponent<MeshCollider>();
+
+            // Extra safety for Unity Editor edge cases (domain reload / Safe Mode transitions)
+            _meshFilter ??= gameObject.GetComponent<MeshFilter>();
+            _meshRenderer ??= gameObject.GetComponent<MeshRenderer>();
+            _meshCollider ??= gameObject.GetComponent<MeshCollider>();
+
+            if (_meshFilter == null || _meshRenderer == null || _meshCollider == null)
+            {
+                Debug.LogError("SlimeController: missing required mesh components. Initialization aborted.");
+                return;
+            }
 
             // Mesh
             var mesh = GridMeshBuilder.Build(_settings.gridResolution, _settings.size);

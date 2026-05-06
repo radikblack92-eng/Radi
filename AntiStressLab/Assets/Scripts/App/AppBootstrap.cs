@@ -44,6 +44,7 @@ namespace AntiStressLab.App
                 var camGo = new GameObject("Main Camera");
                 camGo.tag = "MainCamera";
                 var cam = camGo.AddComponent<Camera>();
+                camGo.AddComponent<AudioListener>();
                 cam.clearFlags = CameraClearFlags.SolidColor;
                 cam.backgroundColor = new Color(0.06f, 0.06f, 0.07f, 1f);
                 cam.orthographic = false;
