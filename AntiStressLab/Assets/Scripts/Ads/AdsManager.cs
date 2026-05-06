@@ -21,9 +21,24 @@ namespace AntiStressLab.Ads
         {
             if (_impl == null)
             {
-                // In MVP we default to Editor fake unless a real implementation is added.
-                // You can replace this with a Yandex implementation behind a define symbol later.
+                if (config == null)
+                {
+                    config = ScriptableObject.CreateInstance<AdsConfig>();
+                    // Default: use your current rewarded unit id. Add the other IDs later.
+                    config.rewardedUnitId = "R-M-19232510-1";
+                    config.interstitialCooldownSeconds = 150f;
+                    config.rewardedCooldownSeconds = 15f;
+                    config.bannerEnabledByDefault = false;
+                }
+
+#if YANDEX_MOBILE_ADS
+                var yandex = gameObject.AddComponent<YandexAdsService>();
+                yandex.Configure(config);
+                _impl = yandex;
+#else
+                // Safe fallback when the Yandex plugin isn't installed yet.
                 _impl = gameObject.AddComponent<EditorFakeAdsService>();
+#endif
             }
 
             _impl.Initialize();
