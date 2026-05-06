@@ -1,5 +1,8 @@
 using System.Linq;
 using UnityEditor;
+#if UNITY_6000_0_OR_NEWER
+using UnityEditor.Build;
+#endif
 using UnityEngine;
 
 namespace AntiStressLab.Editor
@@ -29,20 +32,33 @@ namespace AntiStressLab.Editor
 
             PlayerSettings.productName = ProductName;
 
-            // Default icons
-            var groups = PlayerSettings.GetSupportedBuildTargetGroups();
-            foreach (var g in groups)
-            {
-                if (g == BuildTargetGroup.Unknown) continue;
-                TrySetIconsForGroup(g, tex);
-            }
-
-            // Android adaptive icons (optional; we just set legacy ones here)
+            // Set icons for a few common targets. (Unity 6 removed some legacy APIs.)
+#if UNITY_6000_0_OR_NEWER
+            TrySetIconsForTarget(NamedBuildTarget.FromBuildTargetGroup(BuildTargetGroup.Android), tex);
+            TrySetIconsForTarget(NamedBuildTarget.FromBuildTargetGroup(BuildTargetGroup.Standalone), tex);
+#else
             TrySetIconsForGroup(BuildTargetGroup.Android, tex);
+            TrySetIconsForGroup(BuildTargetGroup.Standalone, tex);
+#endif
 
             SessionState.SetBool(DoneKey, true);
             Debug.Log("Антистресс Вайб: применены иконка и название (" + IconPath + ")");
         }
+
+#if UNITY_6000_0_OR_NEWER
+        private static void TrySetIconsForTarget(NamedBuildTarget target, Texture2D tex)
+        {
+            var icons = PlayerSettings.GetIcons(target);
+            if (icons == null || icons.Length == 0)
+            {
+                PlayerSettings.SetIcons(target, new[] { tex });
+                return;
+            }
+
+            var filled = icons.Select(_ => (Texture2D)tex).ToArray();
+            PlayerSettings.SetIcons(target, filled);
+        }
+#endif
 
         private static void TrySetIconsForGroup(BuildTargetGroup group, Texture2D tex)
         {

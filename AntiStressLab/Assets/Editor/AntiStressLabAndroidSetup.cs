@@ -1,4 +1,7 @@
 using UnityEditor;
+#if UNITY_6000_0_OR_NEWER
+using UnityEditor.Build;
+#endif
 using UnityEngine;
 
 namespace AntiStressLab.Editor
@@ -32,13 +35,21 @@ namespace AntiStressLab.Editor
 
         private static void ApplyIdentifiers()
         {
+#if UNITY_6000_0_OR_NEWER
+            PlayerSettings.SetApplicationIdentifier(NamedBuildTarget.FromBuildTargetGroup(BuildTargetGroup.Android), AndroidAppId);
+#else
             PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, AndroidAppId);
+#endif
         }
 
         private static void ApplyAndroidBuildSettings()
         {
             // Scripting backend / architectures
+#if UNITY_6000_0_OR_NEWER
+            PlayerSettings.SetScriptingBackend(NamedBuildTarget.FromBuildTargetGroup(BuildTargetGroup.Android), ScriptingImplementation.IL2CPP);
+#else
             PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+#endif
 
             // ARM64 required for stores; ARMv7 optional (add later if you want broader device support)
             PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
@@ -52,7 +63,11 @@ namespace AntiStressLab.Editor
 
             // Quality-of-life defaults for release builds
             PlayerSettings.stripEngineCode = true;
+#if UNITY_6000_0_OR_NEWER
+            PlayerSettings.SetManagedStrippingLevel(NamedBuildTarget.FromBuildTargetGroup(BuildTargetGroup.Android), ManagedStrippingLevel.Low);
+#else
             PlayerSettings.SetManagedStrippingLevel(BuildTargetGroup.Android, ManagedStrippingLevel.Low);
+#endif
         }
     }
 }
