@@ -23,7 +23,7 @@ Target **Unity 2022.3 LTS** (or newer LTS).
 2. Player Settings:
    - **Company Name**: your studio
    - **Product Name**: Антистресс Вайб
-   - **Package Name**: `com.yourstudio.antistresslab`
+   - **Package Name**: `ru.radikblack.antistressvibe`
    - **Minimum API Level**: Android 7.0 (API 24) or higher
    - **Scripting Backend**: IL2CPP
    - **Target Architectures**: ARM64 (required for Play)
