@@ -15,6 +15,8 @@ namespace AntiStressLab.Input
 
         private int _activePointer = int.MinValue;
         private Vector2 _pressScreenPos;
+        private bool _hasLastHit;
+        private Vector3 _lastHitPoint;
 
         public void Initialize(SlimeController slime, InteractionAudio audio, SlimeSettings settings)
         {
@@ -27,6 +29,7 @@ namespace AntiStressLab.Input
         {
             _activePointer = pointerId;
             _pressScreenPos = screenPos;
+            _hasLastHit = false;
 
             TryRaycastAndDent(screenPos);
         }
@@ -45,6 +48,7 @@ namespace AntiStressLab.Input
             // If it didn't move much, it's basically a tap (already dented on press).
             // If it did move, last drag already applied pull.
             _activePointer = int.MinValue;
+            _hasLastHit = false;
         }
 
         private void TryRaycastAndDent(Vector2 screenPos)
@@ -56,8 +60,11 @@ namespace AntiStressLab.Input
             var ray = cam.ScreenPointToRay(screenPos);
             if (_slime.Raycast(ray, out var hit))
             {
-                _slime.TapDeform(hit.point);
+                // Clay uses surface normal for realistic indentation.
+                _slime.ClayIndent(hit.point, hit.normal);
                 _audio?.TryPlayInteract(_settings != null ? _settings.interactionVolume : 0.25f);
+                _lastHitPoint = hit.point;
+                _hasLastHit = true;
             }
         }
 
@@ -70,8 +77,18 @@ namespace AntiStressLab.Input
             var ray = cam.ScreenPointToRay(screenPos);
             if (_slime.Raycast(ray, out var hit))
             {
-                _slime.DragDeform(hit.point);
+                if (_hasLastHit)
+                {
+                    Vector3 delta = hit.point - _lastHitPoint;
+                    _slime.ClayGrabDelta(hit.point, delta);
+                }
+                else
+                {
+                    _slime.DragDeform(hit.point);
+                }
                 _audio?.TryPlayInteract(_settings != null ? _settings.interactionVolume : 0.25f);
+                _lastHitPoint = hit.point;
+                _hasLastHit = true;
             }
         }
     }

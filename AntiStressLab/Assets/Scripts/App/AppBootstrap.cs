@@ -51,8 +51,8 @@ namespace AntiStressLab.App
                 cam.fieldOfView = 45f;
                 cam.nearClipPlane = 0.03f;
                 cam.farClipPlane = 100f;
-                camGo.transform.position = new Vector3(0f, 1.2f, -2.2f);
-                camGo.transform.rotation = Quaternion.Euler(20f, 0f, 0f);
+                camGo.transform.position = new Vector3(0f, 0.9f, -2.1f);
+                camGo.transform.rotation = Quaternion.Euler(18f, 0f, 0f);
             }
 
             if (Object.FindAnyObjectByType<Light>() == null)
