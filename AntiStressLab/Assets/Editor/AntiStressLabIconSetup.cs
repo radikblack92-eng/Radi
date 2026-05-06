@@ -48,15 +48,15 @@ namespace AntiStressLab.Editor
 #if UNITY_6000_0_OR_NEWER
         private static void TrySetIconsForTarget(NamedBuildTarget target, Texture2D tex)
         {
-            var icons = PlayerSettings.GetIcons(target);
+            var icons = PlayerSettings.GetIcons(target, IconKind.Application);
             if (icons == null || icons.Length == 0)
             {
-                PlayerSettings.SetIcons(target, new[] { tex });
+                PlayerSettings.SetIcons(target, new[] { tex }, IconKind.Application);
                 return;
             }
 
             var filled = icons.Select(_ => (Texture2D)tex).ToArray();
-            PlayerSettings.SetIcons(target, filled);
+            PlayerSettings.SetIcons(target, filled, IconKind.Application);
         }
 #endif
 
