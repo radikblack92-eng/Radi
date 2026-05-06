@@ -54,7 +54,7 @@ namespace AntiStressLab.App
                 camGo.transform.rotation = Quaternion.Euler(20f, 0f, 0f);
             }
 
-            if (FindFirstObjectByType<Light>() == null)
+            if (Object.FindAnyObjectByType<Light>() == null)
             {
                 var lightGo = new GameObject("Directional Light");
                 var light = lightGo.AddComponent<Light>();

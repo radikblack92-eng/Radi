@@ -14,7 +14,6 @@ namespace AntiStressLab.Input
         private SlimeSettings _settings;
 
         private int _activePointer = int.MinValue;
-        private bool _moved;
         private Vector2 _pressScreenPos;
 
         public void Initialize(SlimeController slime, InteractionAudio audio, SlimeSettings settings)
@@ -27,7 +26,6 @@ namespace AntiStressLab.Input
         public void OnPress(int pointerId, Vector2 screenPos)
         {
             _activePointer = pointerId;
-            _moved = false;
             _pressScreenPos = screenPos;
 
             TryRaycastAndDent(screenPos);
@@ -36,7 +34,6 @@ namespace AntiStressLab.Input
         public void OnDrag(int pointerId, Vector2 screenPos)
         {
             if (pointerId != _activePointer) return;
-            if ((screenPos - _pressScreenPos).sqrMagnitude > 12f * 12f) _moved = true;
 
             TryRaycastAndPull(screenPos);
         }

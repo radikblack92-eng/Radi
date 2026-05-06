@@ -17,7 +17,7 @@ namespace AntiStressLab.Input
             if (_receiver == null) return;
 
             // Touch (Android)
-            if (Input.touchSupported)
+            if (UnityEngine.Input.touchSupported)
             {
                 for (int i = 0; i < UnityEngine.Input.touchCount; i++)
                 {
