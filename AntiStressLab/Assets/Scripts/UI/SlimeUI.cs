@@ -252,7 +252,7 @@ namespace AntiStressLab.UI
             var go = new GameObject("Text");
             go.transform.SetParent(parent, false);
             var t = go.AddComponent<Text>();
-            t.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+            t.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
             t.text = content;
             t.fontSize = 20;
             t.color = new Color(1f, 1f, 1f, 0.85f);
