@@ -34,7 +34,7 @@ namespace AntiStressLab.Slime
         public void Reset()
         {
             for (int i = 0; i < _pos.Length; i++) _pos[i] = _rest[i];
-            _recentInteractionTtl = 0.25f;
+            _recentInteractionTtl = Mathf.Max(0.2f, _s.clayPostTouchHoldSeconds);
             ColliderDirty = true;
         }
 
@@ -58,7 +58,8 @@ namespace AntiStressLab.Slime
             }
 
             // Right after sculpting, relax less aggressively so folds stay crisp longer.
-            float touch01 = Mathf.Clamp01(_recentInteractionTtl / 0.22f);
+            float hold = Mathf.Max(0.08f, _s.clayPostTouchHoldSeconds);
+            float touch01 = Mathf.Clamp01(_recentInteractionTtl / hold);
             float smoothMult = Mathf.Lerp(Mathf.Clamp01(_s.clayPostTouchSmoothMult), 1f, 1f - touch01);
             float effectiveSmooth = smooth * smoothMult;
 
@@ -134,7 +135,7 @@ namespace AntiStressLab.Slime
                 _pos[i] = p + inward + bulge;
             }
 
-            _recentInteractionTtl = 0.22f;
+            _recentInteractionTtl = Mathf.Max(_recentInteractionTtl, _s.clayPostTouchHoldSeconds);
             ColliderDirty = true;
         }
 
@@ -157,7 +158,7 @@ namespace AntiStressLab.Slime
                 _pos[i] = p + blended * (strength * w);
             }
 
-            _recentInteractionTtl = 0.26f;
+            _recentInteractionTtl = Mathf.Max(_recentInteractionTtl, _s.clayPostTouchHoldSeconds);
             ColliderDirty = true;
         }
 

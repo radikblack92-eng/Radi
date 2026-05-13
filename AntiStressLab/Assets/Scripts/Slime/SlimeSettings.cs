@@ -29,12 +29,13 @@ namespace AntiStressLab.Slime
         [Range(0.01f, 0.5f)] public float maxVertexSpeed = 0.18f;
 
         [Header("Simulation (ClayBlob3D)")]
-        [Range(0f, 4f)] public float clayRelaxation = 0.48f;     // self-smooth speed (lower = holds shape longer)
-        [Range(0f, 2f)] public float claySmoothing = 0.42f;      // laplacian blend toward neighbors
-        [Range(0.01f, 0.5f)] public float clayMaxStep = 0.07f;   // max vertex move per relax step
+        [Range(0f, 4f)] public float clayRelaxation = 0.2f;      // self-smooth speed (lower = holds shape longer)
+        [Range(0f, 2f)] public float claySmoothing = 0.14f;      // laplacian blend toward neighbors (high = erodes dents)
+        [Range(0.01f, 0.5f)] public float clayMaxStep = 0.045f;  // max vertex move per relax step
         [Range(0f, 1f)] public float clayVolumePreserve = 0.22f; // bulge outward when indenting (clay feel)
         [Range(0f, 1f)] public float clayGrabTangentRatio = 0.52f; // 0 = raw drag, 1 = mostly surface slide
-        [Range(0.05f, 1f)] public float clayPostTouchSmoothMult = 0.38f; // smoothing multiplier right after touch
+        [Range(0.05f, 1f)] public float clayPostTouchSmoothMult = 0.12f; // smoothing multiplier right after touch (lower = crisper)
+        [Range(0.1f, 2.5f)] public float clayPostTouchHoldSeconds = 0.75f; // how long weak-smoothing window lasts after sculpt
 
         [Header("Rendering (ClayBlob3D)")]
         [Range(0f, 1f)] public float clayGlossiness = 0.12f;
