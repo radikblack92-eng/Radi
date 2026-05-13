@@ -72,7 +72,7 @@ namespace AntiStressLab.Input
             if (_slime.Raycast(ray, out var hit))
             {
                 _slime.ClayIndent(hit.point, hit.normal);
-                _audio?.TryPlayInteract(_settings != null ? _settings.interactionVolume : 0.25f);
+                _audio?.TryPlayInteract(_settings != null ? _settings.interactionVolume : 0f);
 
                 var st = _pointers[pointerId];
                 st.LastHitPoint = hit.point;
@@ -101,7 +101,7 @@ namespace AntiStressLab.Input
                 _slime.DragDeform(hit.point);
             }
 
-            _audio?.TryPlayInteract(_settings != null ? _settings.interactionVolume : 0.25f);
+            _audio?.TryPlayInteract(_settings != null ? _settings.interactionVolume : 0f);
             st.LastHitPoint = hit.point;
             st.HasLastHit = true;
             _pointers[pointerId] = st;

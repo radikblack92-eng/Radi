@@ -33,6 +33,8 @@ namespace AntiStressLab.Audio
 
         public void TryPlayInteract(float volume)
         {
+            if (volume <= 0f) return;
+
             float now = Time.unscaledTime;
             if (now - _lastPlayTime < minIntervalSeconds) return;
             _lastPlayTime = now;

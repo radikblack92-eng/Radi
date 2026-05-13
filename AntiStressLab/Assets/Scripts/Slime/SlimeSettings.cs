@@ -52,7 +52,7 @@ namespace AntiStressLab.Slime
         [Range(1, 10)] public int normalsUpdateEveryNFrames = 2;
 
         [Header("Audio")]
-        [Range(0f, 1f)] public float interactionVolume = 0.25f;
+        [Range(0f, 1f)] public float interactionVolume = 0f;
         [Range(0.02f, 0.5f)] public float minSoundIntervalSeconds = 0.07f;
     }
 }
