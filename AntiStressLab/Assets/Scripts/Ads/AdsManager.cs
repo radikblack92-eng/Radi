@@ -4,8 +4,8 @@ using UnityEngine;
 namespace AntiStressLab.Ads
 {
     /// <summary>
-    /// Central point for ads + vibe-safe throttling.
-    /// Real Yandex SDK integration is wrapped behind compilation symbols to keep the project buildable.
+    /// Optional ads (not used in the first store release). Yandex SDK is behind YANDEX_MOBILE_ADS;
+    /// otherwise EditorFakeAdsService is a no-op stub. Not added to the bootstrap scene by default.
     /// </summary>
     public sealed class AdsManager : MonoBehaviour, IAdsService
     {
