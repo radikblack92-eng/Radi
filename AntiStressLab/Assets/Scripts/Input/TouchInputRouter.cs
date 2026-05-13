@@ -3,8 +3,7 @@ using UnityEngine;
 namespace AntiStressLab.Input
 {
     /// <summary>
-    /// Centralizes touch/mouse input and forwards it to a single receiver.
-    /// Keeps input separate from simulation/rendering.
+    /// Forwards all active touches to the receiver (multi-touch: each fingerId is independent).
     /// </summary>
     public sealed class TouchInputRouter : MonoBehaviour
     {

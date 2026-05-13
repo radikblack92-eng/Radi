@@ -46,7 +46,7 @@ namespace AntiStressLab.App
                 var cam = camGo.AddComponent<Camera>();
                 camGo.AddComponent<AudioListener>();
                 cam.clearFlags = CameraClearFlags.SolidColor;
-                cam.backgroundColor = new Color(0.06f, 0.06f, 0.07f, 1f);
+                cam.backgroundColor = new Color(0.09f, 0.09f, 0.14f, 1f);
                 cam.orthographic = false;
                 cam.fieldOfView = 45f;
                 cam.nearClipPlane = 0.03f;
