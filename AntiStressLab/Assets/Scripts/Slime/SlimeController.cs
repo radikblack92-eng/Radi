@@ -56,8 +56,16 @@ namespace AntiStressLab.Slime
             // Material
             _material = new Material(Shader.Find("Standard"));
             _material.color = _settings.initialColor;
-            _material.SetFloat("_Glossiness", _settings.mode == SlimeSettings.MaterialMode.ClayBlob3D ? 0.35f : 0.65f);
-            _material.SetFloat("_Metallic", 0.05f);
+            if (_settings.mode == SlimeSettings.MaterialMode.ClayBlob3D)
+            {
+                _material.SetFloat("_Glossiness", _settings.clayGlossiness);
+                _material.SetFloat("_Metallic", _settings.clayMetallic);
+            }
+            else
+            {
+                _material.SetFloat("_Glossiness", 0.65f);
+                _material.SetFloat("_Metallic", 0.05f);
+            }
             _meshRenderer.sharedMaterial = _material;
 
             // Simulation state
@@ -86,8 +94,8 @@ namespace AntiStressLab.Slime
 
             var mr = baseGo.GetComponent<MeshRenderer>();
             var mat = new Material(Shader.Find("Standard"));
-            mat.color = new Color(0.09f, 0.09f, 0.10f, 1f);
-            mat.SetFloat("_Glossiness", 0.2f);
+            mat.color = new Color(0.52f, 0.40f, 0.30f, 1f);
+            mat.SetFloat("_Glossiness", 0.1f);
             mr.sharedMaterial = mat;
         }
 
@@ -99,7 +107,8 @@ namespace AntiStressLab.Slime
             _claySim?.Step(Time.deltaTime);
 
             var mesh = _meshFilter.sharedMesh;
-            bool updateNormals = (_frame++ % Mathf.Max(1, _settings.normalsUpdateEveryNFrames) == 0);
+            int cadence = _claySim != null ? 1 : Mathf.Max(1, _settings.normalsUpdateEveryNFrames);
+            bool updateNormals = (_frame++ % cadence) == 0;
             _slimeSim?.ApplyToMesh(mesh, updateNormals);
             _claySim?.ApplyToMesh(mesh, updateNormals);
 

@@ -5,9 +5,10 @@ namespace AntiStressLab.Slime
 {
     /// <summary>
     /// Plastic (clay-like) deformation for an arbitrary mesh:
-    /// - No spring-back to rest shape (it keeps what you sculpt)
-    /// - Laplacian smoothing for "clay relaxation"
-    /// - Grab/pull by applying localized displacement to vertices
+    /// - Keeps sculpted shape (no spring-back to rest)
+    /// - Laplacian relaxation with softer response right after interaction
+    /// - Smooth brush falloff, light volume redistribution on indent
+    /// - Grab blends tangential motion for a sticky stretch feel
     /// </summary>
     public sealed class ClaySimulator
     {
@@ -56,7 +57,12 @@ namespace AntiStressLab.Slime
                 return;
             }
 
-            float a = 1f - Mathf.Exp(-relax * dt); // stable smoothing factor
+            // Right after sculpting, relax less aggressively so folds stay crisp longer.
+            float touch01 = Mathf.Clamp01(_recentInteractionTtl / 0.22f);
+            float smoothMult = Mathf.Lerp(Mathf.Clamp01(_s.clayPostTouchSmoothMult), 1f, 1f - touch01);
+            float effectiveSmooth = smooth * smoothMult;
+
+            float a = 1f - Mathf.Exp(-relax * dt);
 
             for (int i = 0; i < _pos.Length; i++)
             {
@@ -72,11 +78,11 @@ namespace AntiStressLab.Slime
                 avg /= neigh.Length;
 
                 Vector3 p = _pos[i];
-                Vector3 target = Vector3.Lerp(p, avg, smooth);
+                Vector3 target = Vector3.Lerp(p, avg, effectiveSmooth);
 
                 Vector3 delta = (target - p) * a;
                 float mag = delta.magnitude;
-                if (mag > maxStep) delta *= (maxStep / mag);
+                if (mag > maxStep) delta *= maxStep / mag;
 
                 _tmp[i] = p + delta;
             }
@@ -103,6 +109,7 @@ namespace AntiStressLab.Slime
             if (radius <= 0f || strength <= 0f) return;
             float r2 = radius * radius;
             Vector3 dir = -localNormal.normalized;
+            float vol = Mathf.Clamp01(_s.clayVolumePreserve);
 
             for (int i = 0; i < _pos.Length; i++)
             {
@@ -110,11 +117,24 @@ namespace AntiStressLab.Slime
                 float d2 = (p - localPoint).sqrMagnitude;
                 if (d2 > r2) continue;
 
-                float t = 1f - Mathf.Sqrt(d2 / r2);
-                _pos[i] = p + dir * (strength * t);
+                float w = SmoothFalloff(d2, r2);
+                Vector3 inward = dir * (strength * w);
+
+                Vector3 bulge = Vector3.zero;
+                if (vol > 0f)
+                {
+                    Vector3 fromCenter = p;
+                    if (fromCenter.sqrMagnitude > 1e-8f)
+                    {
+                        Vector3 outDir = fromCenter.normalized;
+                        bulge = outDir * (strength * w * vol * 0.18f);
+                    }
+                }
+
+                _pos[i] = p + inward + bulge;
             }
 
-            _recentInteractionTtl = 0.18f;
+            _recentInteractionTtl = 0.22f;
             ColliderDirty = true;
         }
 
@@ -122,7 +142,7 @@ namespace AntiStressLab.Slime
         {
             if (radius <= 0f || strength <= 0f) return;
             float r2 = radius * radius;
-            Vector3 delta = localDelta * strength;
+            float tRatio = Mathf.Clamp01(_s.clayGrabTangentRatio);
 
             for (int i = 0; i < _pos.Length; i++)
             {
@@ -130,12 +150,25 @@ namespace AntiStressLab.Slime
                 float d2 = (p - localPoint).sqrMagnitude;
                 if (d2 > r2) continue;
 
-                float t = 1f - Mathf.Sqrt(d2 / r2);
-                _pos[i] = p + delta * t;
+                float w = SmoothFalloff(d2, r2);
+                Vector3 radial = p.sqrMagnitude > 1e-8f ? p.normalized : Vector3.up;
+                Vector3 tang = localDelta - Vector3.Dot(localDelta, radial) * radial;
+                Vector3 blended = Vector3.Lerp(localDelta, tang + radial * (Vector3.Dot(localDelta, radial) * 0.12f), tRatio);
+                _pos[i] = p + blended * (strength * w);
             }
 
-            _recentInteractionTtl = 0.22f;
+            _recentInteractionTtl = 0.26f;
             ColliderDirty = true;
+        }
+
+        /// <summary>
+        /// Smooth 1 at center -> 0 at radius (C1 falloff).
+        /// </summary>
+        private static float SmoothFalloff(float d2, float r2)
+        {
+            float t = Mathf.Sqrt(d2 / r2);
+            float u = 1f - Mathf.Clamp01(t);
+            return u * u * (3f - 2f * u);
         }
 
         private static int[][] BuildNeighbors(Mesh mesh, int vertexCount)
@@ -165,4 +198,3 @@ namespace AntiStressLab.Slime
         }
     }
 }
-
