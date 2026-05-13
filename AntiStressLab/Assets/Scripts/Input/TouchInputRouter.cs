@@ -15,8 +15,16 @@ namespace AntiStressLab.Input
         {
             if (_receiver == null) return;
 
-            // Touch (Android)
-            if (UnityEngine.Input.touchSupported)
+            // If touchCount > 0 we used to skip the mouse entirely. On many Windows machines Unity
+            // still reports touches while the user sculpts with a mouse in the Game view — then
+            // only TouchPhase.Began-style events fire and it feels like "tap only, no drag".
+            // When the left mouse button is used this frame, prefer the mouse path.
+            bool mouseLeftThisFrame =
+                UnityEngine.Input.GetMouseButton(0) ||
+                UnityEngine.Input.GetMouseButtonDown(0) ||
+                UnityEngine.Input.GetMouseButtonUp(0);
+
+            if (UnityEngine.Input.touchCount > 0 && !mouseLeftThisFrame)
             {
                 for (int i = 0; i < UnityEngine.Input.touchCount; i++)
                 {
@@ -39,7 +47,7 @@ namespace AntiStressLab.Input
                 return;
             }
 
-            // Mouse (Editor)
+            // Mouse (Editor / desktop, or mouse in Game view while touch hardware is present)
             const int mouseId = 0;
             if (UnityEngine.Input.GetMouseButtonDown(0)) _receiver.OnPress(mouseId, UnityEngine.Input.mousePosition);
             if (UnityEngine.Input.GetMouseButton(0)) _receiver.OnDrag(mouseId, UnityEngine.Input.mousePosition);
