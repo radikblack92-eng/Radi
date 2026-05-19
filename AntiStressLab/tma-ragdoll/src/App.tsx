@@ -4,7 +4,12 @@ import { lazy, Suspense, useMemo, useRef, useState } from 'react';
 import { Toolbar } from './components/Toolbar';
 import { useFaceTexture } from './hooks/useFaceTexture';
 import { useTelegramMiniApp } from './hooks/useTelegramMiniApp';
-import { captureScenePreview, sendSandboxResult } from './lib/telegram';
+import {
+  captureScenePreview,
+  sendSandboxResult,
+  submitSandboxResultToBackend,
+  type SandboxResultPayload,
+} from './lib/telegram';
 import { withAlpha } from './lib/colors';
 
 const RagdollScene = lazy(() =>
@@ -12,7 +17,7 @@ const RagdollScene = lazy(() =>
 );
 
 function App() {
-  const { isTelegram, palette, user } = useTelegramMiniApp();
+  const { isTelegram, palette, queryId, rawInitData, user } = useTelegramMiniApp();
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [resetKey, setResetKey] = useState(0);
   const [status, setStatus] = useState('Готово к броскам');
@@ -32,22 +37,52 @@ function App() {
     [palette],
   );
 
-  const handleShare = () => {
+  const handleShare = async () => {
     const preview = captureScenePreview(canvasRef.current);
-    const sent = sendSandboxResult({
+    const payload: SandboxResultPayload = {
       createdAt: new Date().toISOString(),
       faceTextureLoaded: Boolean(faceTexture),
+      queryId,
       type: 'ragdoll_result',
       userId: user?.id,
-    });
+    };
 
-    setStatus(
-      sent
-        ? 'Результат отправлен через Telegram WebApp API'
-        : preview
-          ? 'Превью подготовлено: подключите backend upload + sendData'
-          : 'Canvas еще не готов для превью',
-    );
+    setStatus('Готовим результат...');
+
+    try {
+      const backendResult = await submitSandboxResultToBackend({
+        initDataRaw: rawInitData,
+        payload,
+        previewDataUrl: preview,
+      });
+      const compactPayload: SandboxResultPayload = {
+        ...payload,
+        resultId: backendResult?.resultId,
+        shareUrl: backendResult?.shareUrl,
+      };
+      const sent = sendSandboxResult(compactPayload);
+
+      if (backendResult?.ok) {
+        setStatus(sent ? 'Результат отправлен и сохранен' : 'Результат сохранен на backend');
+        return;
+      }
+
+      if (backendResult && !backendResult.ok) {
+        setStatus(backendResult.error ?? 'Backend не принял результат');
+        return;
+      }
+
+      setStatus(
+        sent
+          ? 'Результат отправлен через Telegram WebApp API'
+          : preview
+            ? 'Превью подготовлено: настройте VITE_RESULT_API_URL'
+            : 'Canvas еще не готов для превью',
+      );
+    } catch (error) {
+      console.warn('Unable to submit sandbox result:', error);
+      setStatus('Не удалось отправить результат на backend');
+    }
   };
 
   return (

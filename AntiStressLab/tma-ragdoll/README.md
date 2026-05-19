@@ -18,6 +18,9 @@ npm run dev
 npm run build
 ```
 
+Copy `.env.example` to `.env.local` for local frontend settings. Keep real bot tokens only in
+server-side environment variables.
+
 ## Architecture
 
 - `src/hooks/useTelegramMiniApp.ts` initializes Telegram WebApp SDK, restores init data, binds theme CSS variables, and exposes user/theme state.
@@ -25,7 +28,7 @@ npm run build
 - `src/components/Ragdoll.tsx` defines a low-poly procedural mannequin with constrained physics bodies.
 - `src/hooks/usePointerDragControls.ts` implements touch-first grabbing/flinging with Pointer Events.
 - `src/components/PhotoLoader.tsx` loads a phone gallery image; `useFaceTexture` maps it onto the head face with `TextureLoader`.
-- `src/lib/telegram.ts` contains a small `sendData` integration point for sending result metadata to the bot.
+- `src/lib/telegram.ts` contains `sendData` and backend submission integration points for sending result metadata to the bot.
 
 ## Mobile GPU notes
 
@@ -35,4 +38,17 @@ npm run build
 
 ## Sending the result to chat
 
-`sendSandboxResult` currently sends compact JSON via Telegram `sendData`. For screenshots, call `captureScenePreview(canvas)`, upload that data URL to your backend/storage, then include the returned file id or URL in the small payload sent through `sendData` or your bot's `answerWebAppQuery` flow.
+`sendSandboxResult` sends compact JSON via Telegram `sendData`. If `VITE_RESULT_API_URL` is set,
+the frontend first posts `{ initDataRaw, payload, previewDataUrl }` to your backend and then sends
+only a compact result reference back to Telegram.
+
+Never put a bot token in the Vite frontend. Use `TELEGRAM_BOT_TOKEN` only on the server:
+
+```bash
+cp .env.example .env.local
+TELEGRAM_BOT_TOKEN=... PUBLIC_RESULT_BASE_URL=https://your-domain.example/results npm run server:result
+```
+
+`server/telegram-result-handler.mjs` is a minimal Node reference handler for
+`POST /api/tma/ragdoll-result`. In production, add persistent storage for `previewDataUrl`, verify
+`initDataRaw` with your bot token before trusting user identity, and deploy the handler behind HTTPS.

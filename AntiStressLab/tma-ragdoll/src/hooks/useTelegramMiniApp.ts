@@ -2,6 +2,8 @@ import {
   bindMiniAppCssVars,
   bindThemeParamsCssVars,
   init,
+  initDataQueryId,
+  initDataRaw,
   initDataUser,
   isTMA,
   miniAppReady,
@@ -30,6 +32,8 @@ export function useTelegramMiniApp() {
   const buttonColor = useSignal(themeParamsButtonColor);
   const buttonTextColor = useSignal(themeParamsButtonTextColor);
   const user = useSignal(initDataUser);
+  const queryId = useSignal(initDataQueryId);
+  const rawInitData = useSignal(initDataRaw);
   const [isTelegram, setIsTelegram] = useState(false);
 
   useEffect(() => {
@@ -115,6 +119,8 @@ export function useTelegramMiniApp() {
   return {
     isTelegram,
     palette,
+    queryId,
+    rawInitData,
     user,
   };
 }
