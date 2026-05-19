@@ -23,6 +23,39 @@ server-side environment variables.
 
 The default public bot entrypoint is configured as `VITE_TELEGRAM_BOT_URL=https://t.me/rooommerbot`.
 
+## Deploy
+
+The repository includes a GitHub Pages workflow at
+`.github/workflows/tma-ragdoll-pages.yml`. After this branch is merged into `main`, run the workflow
+manually or push to `main`; it builds the app with:
+
+```bash
+VITE_BASE_PATH=/Radi/
+VITE_TELEGRAM_BOT_URL=https://t.me/rooommerbot
+```
+
+Expected HTTPS Mini App URL:
+
+```text
+https://radikblack92-eng.github.io/Radi/
+```
+
+GitHub Pages must be enabled for the repository with **Source: GitHub Actions** in repository
+settings.
+
+## Connect the Telegram bot
+
+Do not paste bot tokens into source code or shell commands that are saved in logs. Put the token in
+your local/server environment and configure the bot menu button with:
+
+```bash
+cd AntiStressLab/tma-ragdoll
+TELEGRAM_BOT_TOKEN=... WEB_APP_URL=https://radikblack92-eng.github.io/Radi/ npm run bot:configure
+```
+
+The script calls Telegram Bot API methods `setChatMenuButton`, `setMyCommands`, and
+`setMyShortDescription`. If BotFather asks for a Web App URL, use the same HTTPS URL above.
+
 ## Architecture
 
 - `src/hooks/useTelegramMiniApp.ts` initializes Telegram WebApp SDK, restores init data, binds theme CSS variables, and exposes user/theme state.

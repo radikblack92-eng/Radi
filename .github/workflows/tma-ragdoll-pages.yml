@@ -1,0 +1,61 @@
+name: Deploy TMA Ragdoll to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - AntiStressLab/tma-ragdoll/**
+      - .github/workflows/tma-ragdoll-pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  pages: write
+
+concurrency:
+  group: tma-ragdoll-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: AntiStressLab/tma-ragdoll
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: AntiStressLab/tma-ragdoll/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        env:
+          VITE_BASE_PATH: /Radi/
+          VITE_TELEGRAM_BOT_URL: https://t.me/rooommerbot
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: AntiStressLab/tma-ragdoll/dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
