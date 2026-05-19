@@ -23,6 +23,7 @@ function App() {
   const [status, setStatus] = useState('Готово к броскам');
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const faceTexture = useFaceTexture(photoFile);
+  const botUrl = import.meta.env.VITE_TELEGRAM_BOT_URL;
 
   const cssVars = useMemo(
     () =>
@@ -122,8 +123,20 @@ function App() {
               {user?.first_name ? `Игрок: ${user.first_name}` : 'Telegram Mini App MVP'}
             </p>
           </div>
-          <div className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
-            {isTelegram ? 'TMA' : 'Web'}
+          <div className="flex flex-col items-end gap-1">
+            <div className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
+              {isTelegram ? 'TMA' : 'Web'}
+            </div>
+            {botUrl ? (
+              <a
+                className="pointer-events-auto rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/70 underline-offset-2 active:scale-95"
+                href={botUrl}
+                rel="noreferrer"
+                target="_blank"
+              >
+                Bot
+              </a>
+            ) : null}
           </div>
         </div>
       </div>

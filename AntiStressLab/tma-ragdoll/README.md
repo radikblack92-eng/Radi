@@ -21,6 +21,8 @@ npm run build
 Copy `.env.example` to `.env.local` for local frontend settings. Keep real bot tokens only in
 server-side environment variables.
 
+The default public bot entrypoint is configured as `VITE_TELEGRAM_BOT_URL=https://t.me/rooommerbot`.
+
 ## Architecture
 
 - `src/hooks/useTelegramMiniApp.ts` initializes Telegram WebApp SDK, restores init data, binds theme CSS variables, and exposes user/theme state.
