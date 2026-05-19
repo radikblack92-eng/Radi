@@ -7,12 +7,20 @@ export default defineConfig({
   build: {
     target: 'es2020',
     cssCodeSplit: true,
+    chunkSizeWarningLimit: 1600,
     sourcemap: false,
     rollupOptions: {
       output: {
-        manualChunks: {
-          three: ['three', '@react-three/fiber', '@react-three/cannon'],
-          telegram: ['@telegram-apps/sdk-react'],
+        manualChunks(id) {
+          if (id.includes('node_modules/three') || id.includes('node_modules/@react-three')) {
+            return 'three';
+          }
+
+          if (id.includes('node_modules/@telegram-apps')) {
+            return 'telegram';
+          }
+
+          return undefined;
         },
       },
     },

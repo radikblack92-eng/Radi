@@ -30,7 +30,7 @@ type PartMeshProps = {
 };
 
 const BODY_MATERIAL = 'ragdoll';
-const INITIAL_POSE = {
+const INITIAL_POSE: Record<string, PartPose> = {
   head: { position: [0, 2.45, 0] },
   torso: { position: [0, 1.65, 0] },
   pelvis: { position: [0, 1.05, 0] },
@@ -46,7 +46,7 @@ const INITIAL_POSE = {
   upperLegRight: { position: [0.24, 0.62, 0] },
   lowerLegRight: { position: [0.25, 0.06, 0] },
   footRight: { position: [0.25, -0.25, 0.13] },
-} satisfies Record<string, PartPose>;
+};
 
 function resetBody(api: PublicApi, pose: PartPose) {
   const [x, y, z] = pose.position;
