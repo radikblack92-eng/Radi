@@ -41,3 +41,14 @@ sysinfo.txt
 Thumbs.db
 Desktop.ini
 
+# Node / Vite
+node_modules/
+dist/
+.vite/
+.env
+.env.*
+!.env.example
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+

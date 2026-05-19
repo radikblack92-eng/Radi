@@ -37,3 +37,9 @@ Target **Unity 2022.3 LTS** (or newer LTS).
 - Default mesh is a moderate grid; tune resolution in `SlimeSettings`.
 - The deformation runs on the main thread but is lightweight; keep VSync off on mobile and cap at 60.
 
+### Telegram Mini App prototype
+- A separate React/Vite MVP for a 3D ragdoll sandbox lives in `tma-ragdoll/`.
+- It uses React Three Fiber, `@react-three/cannon`, Tailwind CSS, and `@telegram-apps/sdk-react`.
+- Run it with `cd AntiStressLab/tma-ragdoll && npm install && npm run dev`.
+- The GitHub Pages workflow deploys it to `https://radikblack92-eng.github.io/Radi/` after merge to `main`.
+
