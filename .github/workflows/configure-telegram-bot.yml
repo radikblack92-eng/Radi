@@ -38,6 +38,6 @@ jobs:
         env:
           BOT_DESCRIPTION: ${{ inputs.bot_description }}
           BOT_MENU_TEXT: ${{ inputs.bot_menu_text }}
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN 5997182037:AAEX-AFSrUfon1LInoG0nRzaUEon7WspNd8 }}
           WEB_APP_URL: ${{ inputs.web_app_url }}
         run: npm run bot:configure
