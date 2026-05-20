@@ -45,8 +45,23 @@ settings.
 
 ## Connect the Telegram bot
 
-Do not paste bot tokens into source code or shell commands that are saved in logs. Put the token in
-your local/server environment and configure the bot menu button with:
+Do not paste bot tokens into source code or log filters. Add the renewed token as a GitHub Actions
+secret:
+
+```text
+Settings -> Secrets and variables -> Actions -> New repository secret
+Name: TELEGRAM_BOT_TOKEN
+Value: <renewed token from BotFather>
+```
+
+Then open **Actions -> Configure Telegram Bot -> Run workflow** and keep the default Web App URL:
+
+```text
+https://radikblack92-eng.github.io/Radi/
+```
+
+The workflow uses the secret and configures the bot menu button without printing the token. You can
+also run the same script locally/server-side with:
 
 ```bash
 cd AntiStressLab/tma-ragdoll

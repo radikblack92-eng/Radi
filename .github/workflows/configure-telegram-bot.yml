@@ -1,0 +1,43 @@
+name: Configure Telegram Bot
+
+on:
+  workflow_dispatch:
+    inputs:
+      web_app_url:
+        description: HTTPS URL of the deployed Telegram Mini App
+        required: true
+        default: https://radikblack92-eng.github.io/Radi/
+      bot_menu_text:
+        description: Text shown on the Telegram bot menu button
+        required: true
+        default: Ragdoll
+      bot_description:
+        description: Short bot description
+        required: true
+        default: Open the Ragdoll Sandbox Telegram Mini App.
+
+permissions:
+  contents: read
+
+jobs:
+  configure:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: AntiStressLab/tma-ragdoll
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Configure bot menu button
+        env:
+          BOT_DESCRIPTION: ${{ inputs.bot_description }}
+          BOT_MENU_TEXT: ${{ inputs.bot_menu_text }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          WEB_APP_URL: ${{ inputs.web_app_url }}
+        run: npm run bot:configure
